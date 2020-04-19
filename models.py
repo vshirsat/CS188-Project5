@@ -150,15 +150,9 @@ class DigitClassificationModel(object):
     """
     def __init__(self):
         # Initialize your model parameters here
-<<<<<<< HEAD
-        self.learning_rate = 0.7
-        self.batch_size = 500
-        self.hidden_layer_size = 100
-=======
         self.learning_rate = 0.5
         self.batch_size = 500
         self.hidden_layer_size = 200
->>>>>>> e40bad7715b762d4bf61d553038e5af44839ec76
         self.output_size = 10
         self.weights1 = nn.Parameter(784, self.hidden_layer_size)
         self.weights2 = nn.Parameter(self.hidden_layer_size, self.output_size)
@@ -209,11 +203,7 @@ class DigitClassificationModel(object):
         for x, y in dataset.iterate_forever(self.batch_size):
             loss = self.get_loss(x, y)
             multiplier = self.learning_rate
-<<<<<<< HEAD
-            if dataset.get_validation_accuracy() < 0.98:
-=======
             if dataset.get_validation_accuracy() < 0.975:
->>>>>>> e40bad7715b762d4bf61d553038e5af44839ec76
                 multiplier = -multiplier
                 grad_wrt_w1, grad_wrt_w2, grad_wrt_b1, grad_wrt_b2 = nn.gradients(loss, [self.weights1, self.weights2, self.b1, self.b2])
                 
@@ -223,11 +213,8 @@ class DigitClassificationModel(object):
                 self.weights2.update(grad_wrt_w2, multiplier)
                 self.b2.update(grad_wrt_b2, multiplier)
             else:
-                return 
-<<<<<<< HEAD
-
-=======
->>>>>>> e40bad7715b762d4bf61d553038e5af44839ec76
+                return D
+                
 
 class LanguageIDModel(object):
     """
