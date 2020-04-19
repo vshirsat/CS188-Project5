@@ -118,7 +118,7 @@ class RegressionModel(object):
         """
         "*** YOUR CODE HERE ***"
         for x, y in dataset.iterate_forever(self.batch_size):
-            loss = self.get_loss(x, y)
+            loss = self.get_loss(dataset.x, dataset.y)
             loss_scalar = nn.as_scalar(loss)
             multiplier = self.learning_rate
             if loss_scalar > 0.02:
