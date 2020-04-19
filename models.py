@@ -150,8 +150,8 @@ class DigitClassificationModel(object):
     """
     def __init__(self):
         # Initialize your model parameters here
-        self.learning_rate = 0.5
-        self.batch_size = 500
+        self.learning_rate = 0.4
+        self.batch_size = 300
         self.hidden_layer_size = 200
         self.output_size = 10
         self.weights1 = nn.Parameter(784, self.hidden_layer_size)
