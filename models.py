@@ -77,8 +77,8 @@ class RegressionModel(object):
         self.output_size = 1
         self.weights1 = nn.Parameter(1, self.hidden_layer_size)
         self.weights2 = nn.Parameter(self.hidden_layer_size, self.output_size)
-        self.b1 = nn.Parameter(1, self.hidden_layer_size)
-        self.b2 = nn.Parameter(1, self.output_size)
+        self.bias1 = nn.Parameter(1, self.hidden_layer_size)
+        self.bias2 = nn.Parameter(1, self.output_size)
 
 
     def run(self, x):
@@ -92,9 +92,9 @@ class RegressionModel(object):
         """
         "*** YOUR CODE HERE ***"
         x_w1 = nn.Linear(x, self.weights1)
-        xw1_b1_sum = nn.AddBias(x_w1, self.b1)
+        xw1_b1_sum = nn.AddBias(x_w1, self.bias1)
         relu = nn.ReLU(xw1_b1_sum)
-        final = nn.AddBias(nn.Linear(relu, self.weights2), self.b2)
+        final = nn.AddBias(nn.Linear(relu, self.weights2), self.bias2)
         return final
         
 
@@ -123,13 +123,13 @@ class RegressionModel(object):
             multiplier = self.learning_rate
             if loss_scalar > 0.01:
                 multiplier = -multiplier
-                grad_wrt_w1, grad_wrt_w2, grad_wrt_b1, grad_wrt_b2 = nn.gradients(loss, [self.weights1, self.weights2, self.b1, self.b2])
+                grad_wrt_w1, grad_wrt_w2, grad_wrt_b1, grad_wrt_b2 = nn.gradients(loss, [self.weights1, self.weights2, self.bias1, self.bias2])
                 
                 self.weights1.update(grad_wrt_w1, multiplier)
-                self.b1.update(grad_wrt_b1, multiplier)
+                self.bias1.update(grad_wrt_b1, multiplier)
 
                 self.weights2.update(grad_wrt_w2, multiplier)
-                self.b2.update(grad_wrt_b2, multiplier)
+                self.bias2.update(grad_wrt_b2, multiplier)
             else:
                 return
 
@@ -156,8 +156,8 @@ class DigitClassificationModel(object):
         self.output_size = 10
         self.weights1 = nn.Parameter(784, self.hidden_layer_size)
         self.weights2 = nn.Parameter(self.hidden_layer_size, self.output_size)
-        self.b1 = nn.Parameter(1, self.hidden_layer_size)
-        self.b2 = nn.Parameter(1, self.output_size)
+        self.bias1 = nn.Parameter(1, self.hidden_layer_size)
+        self.bias2 = nn.Parameter(1, self.output_size)
 
     def run(self, x):
         """
@@ -174,9 +174,9 @@ class DigitClassificationModel(object):
                 (also called logits)
         """
         x_w1 = nn.Linear(x, self.weights1)
-        xw1_b1_sum = nn.AddBias(x_w1, self.b1)
+        xw1_b1_sum = nn.AddBias(x_w1, self.bias1)
         relu = nn.ReLU(xw1_b1_sum)
-        notfinal = nn.AddBias(nn.Linear(relu, self.weights2), self.b2)
+        notfinal = nn.AddBias(nn.Linear(relu, self.weights2), self.bias2)
         return notfinal
 
     def get_loss(self, x, y):
@@ -205,15 +205,15 @@ class DigitClassificationModel(object):
             multiplier = self.learning_rate
             if dataset.get_validation_accuracy() < 0.975:
                 multiplier = -multiplier
-                grad_wrt_w1, grad_wrt_w2, grad_wrt_b1, grad_wrt_b2 = nn.gradients(loss, [self.weights1, self.weights2, self.b1, self.b2])
+                grad_wrt_w1, grad_wrt_w2, grad_wrt_b1, grad_wrt_b2 = nn.gradients(loss, [self.weights1, self.weights2, self.bias1, self.bias2])
                 
                 self.weights1.update(grad_wrt_w1, multiplier)
-                self.b1.update(grad_wrt_b1, multiplier)
+                self.bias1.update(grad_wrt_b1, multiplier)
 
                 self.weights2.update(grad_wrt_w2, multiplier)
-                self.b2.update(grad_wrt_b2, multiplier)
+                self.bias2.update(grad_wrt_b2, multiplier)
             else:
-                return D
+                return 
                 
 
 class LanguageIDModel(object):
@@ -241,8 +241,8 @@ class LanguageIDModel(object):
         self.weights1 = nn.Parameter(self.num_chars, self.hidden_layer_size)
         self.weights2 = nn.Parameter(self.hidden_layer_size, 5)
         self.weights3 = nn.Parameter(5, self.hidden_layer_size)
-        self.b1 = nn.Parameter(1, self.hidden_layer_size)
-        self.b2 = nn.Parameter(1, 5)
+        self.bias1 = nn.Parameter(1, self.hidden_layer_size)
+        self.bias2 = nn.Parameter(1, 5)
 
 
     def run(self, xs):
@@ -277,15 +277,15 @@ class LanguageIDModel(object):
         "*** YOUR CODE HERE ***"
         x = xs[0]
         x_w1 = nn.Linear(x, self.weights1) # (bs x numchars) * (numchars x hidden) = (bs x hidden)
-        xw1_b1_sum = nn.AddBias(x_w1, self.b1) # (bs x hidden)
+        xw1_b1_sum = nn.AddBias(x_w1, self.bias1) # (bs x hidden)
         relu = nn.ReLU(xw1_b1_sum) # (bs x hs)
-        h_n = nn.AddBias(nn.Linear(relu, self.weights2), self.b2) # (bs x hs) * (hs x 5) = (bs x 5) + (bs x 5)
+        h_n = nn.AddBias(nn.Linear(relu, self.weights2), self.bias2) # (bs x hs) * (hs x 5) = (bs x 5) + (bs x 5)
 
         for x in xs[1:]:
             x_w1 = nn.Add(nn.Linear(x, self.weights1), nn.Linear(h_n, self.weights3)) # bs x hs + bsx5 * 5xhs = bs x hs
-            xw1_b1_sum = nn.AddBias(x_w1, self.b1) # bs x hs 
+            xw1_b1_sum = nn.AddBias(x_w1, self.bias1) # bs x hs 
             relu = nn.ReLU(xw1_b1_sum)
-            h_n = nn.AddBias(nn.Linear(relu, self.weights2), self.b2)
+            h_n = nn.AddBias(nn.Linear(relu, self.weights2), self.bias2)
 
         return h_n
             
@@ -319,13 +319,13 @@ class LanguageIDModel(object):
             multiplier = self.learning_rate
             if dataset.get_validation_accuracy() < 0.86:
                 multiplier = -multiplier
-                grad_wrt_w1, grad_wrt_w2, grad_wrt_w3, grad_wrt_b1, grad_wrt_b2 = nn.gradients(loss, [self.weights1, self.weights2, self.weights3, self.b1, self.b2])
+                grad_wrt_w1, grad_wrt_w2, grad_wrt_w3, grad_wrt_b1, grad_wrt_b2 = nn.gradients(loss, [self.weights1, self.weights2, self.weights3, self.bias1, self.bias2])
                 
                 self.weights1.update(grad_wrt_w1, multiplier)
-                self.b1.update(grad_wrt_b1, multiplier)
+                self.bias1.update(grad_wrt_b1, multiplier)
 
                 self.weights2.update(grad_wrt_w2, multiplier)
-                self.b2.update(grad_wrt_b2, multiplier)
+                self.bias2.update(grad_wrt_b2, multiplier)
 
                 self.weights3.update(grad_wrt_w3, multiplier)
             else:
